@@ -1,64 +1,7 @@
-const ALLOWED_TARGETS=new Set(['dashboard','enquiries','inspections','inspectors','franchises','storage','campaigns','referrals','reviews','report','quickSMS']);
-export const runtime='nodejs';
-export const maxDuration=45;
-
-const SYSTEM=`You are InspectFlow Agent for a multi-tenant building and pool inspection operations platform. Use only supplied context for record-specific claims. Be concise, practical and operational. Never claim a write succeeded unless the application confirms it. Return JSON only with keys message and actions. actions is an array of {label,type,target}; type may only be navigate and target must be one of dashboard,enquiries,inspections,inspectors,franchises,storage,campaigns,referrals,reviews,report,quickSMS.`;
-const schema={type:'json_schema',json_schema:{name:'inspectflow_agent_response',strict:true,schema:{type:'object',additionalProperties:false,properties:{message:{type:'string'},actions:{type:'array',maxItems:4,items:{type:'object',additionalProperties:false,properties:{label:{type:'string'},type:{type:'string',enum:['navigate']},target:{type:'string',enum:[...ALLOWED_TARGETS]}},required:['label','type','target']}}},required:['message','actions']}}};
-
-function safeFallback(message){
-  const q=message.toLowerCase();
-  const route=q.includes('report')?'report':q.includes('enquir')?'enquiries':q.includes('inspector')?'inspectors':q.includes('franchise')?'franchises':q.includes('campaign')?'campaigns':q.includes('referral')?'referrals':q.includes('review')?'reviews':q.includes('storage')?'storage':q.includes('sms')?'quickSMS':q.includes('inspection')||q.includes('job')?'inspections':null;
-  const label=route?`Open ${route==='quickSMS'?'Quick SMS':route[0].toUpperCase()+route.slice(1)}`:null;
-  return {message:route?`I can take you to ${label.replace(/^Open /,'')} and keep the workflow inside InspectFlow.`:'The live AI provider is temporarily unavailable. You can keep working in InspectFlow; try the request again in a moment.',actions:route?[{label,type:'navigate',target:route}]:[],model:'local-safe-fallback',degraded:true};
-}
-
-function parseAssistant(raw){
-  if(raw&&typeof raw==='object')return raw;
-  const text=String(raw||'').trim();
-  if(!text)return null;
-  try{return JSON.parse(text)}catch{}
-  const fenced=text.match(/```(?:json)?\s*([\s\S]*?)```/i)?.[1];
-  if(fenced)try{return JSON.parse(fenced)}catch{}
-  const start=text.indexOf('{'),end=text.lastIndexOf('}');
-  if(start>=0&&end>start)try{return JSON.parse(text.slice(start,end+1))}catch{}
-  return {message:text,actions:[]};
-}
-
-async function callOpenRouter({apiKey,model,message,context,signal,structured}){
-  const payload={model,temperature:0.2,messages:[{role:'system',content:SYSTEM},{role:'system',content:`Current application context: ${JSON.stringify(context).slice(0,30000)}`},{role:'user',content:message}]};
-  if(structured)payload.response_format=schema;
-  return fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',signal,headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','HTTP-Referer':process.env.NEXT_PUBLIC_APP_URL||'https://inspectflow-ai-ops.vercel.app','X-Title':'InspectFlow Operations'},body:JSON.stringify(payload)});
-}
-
-export async function POST(request){
-  const apiKey=process.env.OPENROUTER_API_KEY;
-  if(!apiKey)return Response.json({...safeFallback(''),message:'OpenRouter is not configured for this deployment.'},{status:200,headers:{'Cache-Control':'no-store'}});
-  const body=await request.json().catch(()=>({}));
-  const message=String(body?.message||'').trim().slice(0,8000);
-  if(!message)return Response.json({error:'A message is required.'},{status:400});
-  const context=body?.context&&typeof body.context==='object'?body.context:{};
-  const model=process.env.OPENROUTER_CHAT_MODEL||'openrouter/auto';
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),35000);
-  try{
-    let upstream=await callOpenRouter({apiKey,model,message,context,signal:controller.signal,structured:true});
-    let text=await upstream.text();
-    if(!upstream.ok){
-      // Auto Router may pick a model without strict JSON-schema support. Retry once without response_format.
-      upstream=await callOpenRouter({apiKey,model,message,context,signal:controller.signal,structured:false});
-      text=await upstream.text();
-    }
-    if(!upstream.ok){
-      console.error('OpenRouter upstream failure',upstream.status,text.slice(0,240));
-      return Response.json({...safeFallback(message),providerStatus:upstream.status},{status:200,headers:{'Cache-Control':'no-store'}});
-    }
-    let data;try{data=JSON.parse(text)}catch{return Response.json(safeFallback(message),{status:200,headers:{'Cache-Control':'no-store'}})}
-    const parsed=parseAssistant(data?.choices?.[0]?.message?.content);
-    if(!parsed)return Response.json(safeFallback(message),{status:200,headers:{'Cache-Control':'no-store'}});
-    const actions=Array.isArray(parsed.actions)?parsed.actions.filter(a=>a&&a.type==='navigate'&&ALLOWED_TARGETS.has(a.target)&&typeof a.label==='string').slice(0,4):[];
-    return Response.json({message:String(parsed.message||'No response was generated.'),actions,model:data?.model||model,degraded:false},{headers:{'Cache-Control':'no-store'}});
-  }catch(err){
-    console.error('InspectFlow Agent failure',err?.name||'Error',String(err?.message||err).slice(0,220));
-    return Response.json({...safeFallback(message),timeout:err?.name==='AbortError'},{status:200,headers:{'Cache-Control':'no-store'}});
-  }finally{clearTimeout(timeout)}
-}
+import {NextResponse} from 'next/server';
+export const runtime='nodejs'; export const maxDuration=45;
+const allowed=['/dashboard','/admin','/fetch','/enquiries/tb-yb','/enquiries/franchise','/inspections/building-national','/inspections/building-franchise','/inspections/pool-national','/inspections/pool-franchise','/inspectors','/report-studio','/franchises','/storage','/campaigns','/referrals','/reviews','/quick-sms','/field'];
+const schema={type:'object',additionalProperties:false,properties:{message:{type:'string'},actions:{type:'array',maxItems:4,items:{type:'object',additionalProperties:false,properties:{id:{type:'string'},label:{type:'string'},target:{type:'string',enum:allowed}},required:['id','label','target']}}},required:['message','actions']};
+function fallback(message){const q=message.toLowerCase();let target=q.includes('report')?'/report-studio':q.includes('document')||q.includes('pdf')?'/fetch':q.includes('enquir')?'/enquiries/tb-yb':q.includes('inspect')?'/inspections/building-national':null;return {message:target?'I can open the relevant InspectFlow workspace.':'I can help with live operational context, records, reports, document intake and navigation.',actions:target?[{id:'open',label:'Open workspace',target}]:[],source:'deterministic'}}
+async function callOpenRouter(apiKey,payload){return fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','HTTP-Referer':process.env.NEXT_PUBLIC_APP_URL||'https://inspectflow-ai-ops.vercel.app','X-Title':'InspectFlow'},body:JSON.stringify(payload),signal:AbortSignal.timeout(35000)})}
+export async function POST(req){try{const body=await req.json();const message=String(body.message||'').slice(0,8000);if(!message.trim())return NextResponse.json({error:'Message required'},{status:400});const apiKey=process.env.OPENROUTER_API_KEY;if(!apiKey)return NextResponse.json(fallback(message));const base={model:process.env.OPENROUTER_CHAT_MODEL||'openrouter/auto',temperature:.2,messages:[{role:'system',content:`You are InspectFlow Agent, an operations copilot for a multi-tenant building and pool inspection platform. Use only the provided live context. Be concise, practical and trainee-friendly. Never claim an action was completed unless the application confirms it. Never return arbitrary URLs. Allowed targets: ${allowed.join(', ')}.`},{role:'system',content:`Live context: ${JSON.stringify(body.context||{})}`},{role:'user',content:message}]};let res=await callOpenRouter(apiKey,{...base,response_format:{type:'json_schema',json_schema:{name:'inspectflow_response',strict:true,schema}}});if(!res.ok)res=await callOpenRouter(apiKey,{...base,messages:[...base.messages,{role:'system',content:'Return JSON only with shape {"message":"...","actions":[{"id":"...","label":"...","target":"/allowed-path"}]}. No markdown.'}]});if(!res.ok){const text=await res.text();console.error('OpenRouter',res.status,text.slice(0,500));return NextResponse.json({...fallback(message),providerError:true})}const data=await res.json();let raw=data?.choices?.[0]?.message?.content;let parsed=typeof raw==='string'?JSON.parse(raw):raw;const actions=Array.isArray(parsed?.actions)?parsed.actions.filter(a=>allowed.includes(a.target)).slice(0,4):[];return NextResponse.json({message:String(parsed?.message||'Ready.'),actions,source:'openrouter',model:data.model||base.model})}catch(e){console.error('AI route',e);return NextResponse.json({message:'The AI service is temporarily unavailable. InspectFlow remains usable.',actions:[],source:'fallback'},{status:200})}}

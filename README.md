@@ -1,14 +1,21 @@
 # InspectFlow
 
-Production-focused multi-tenant inspection operations console + mobile Field App preview.
+Production Next.js operations platform for multi-tenant inspection franchises.
 
-## Environment
-- `OPENROUTER_API_KEY`
-- `OPENROUTER_CHAT_MODEL` (optional, defaults to `openrouter/auto`)
-- `DATABASE_URL` (optional health connectivity check)
-- `NEXT_PUBLIC_APP_URL` (optional)
+## Routes
+- `/dashboard`, `/admin`, `/fetch`
+- `/enquiries/tb-yb`, `/enquiries/franchise`
+- `/inspections/building-national`, `/inspections/building-franchise`
+- `/inspections/pool-national`, `/inspections/pool-franchise`
+- `/inspectors`, `/franchises`, `/storage`, `/campaigns`, `/referrals`, `/reviews`
+- `/report-studio`, `/reports/IF-20841/preview?template=executive`
+- `/quick-sms`, `/field`
 
-## Endpoints
-- `/api/health`
-- `/api/ai`
-- `/api/report-preview?template=executive`
+## Local development
+```bash
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+OpenRouter AI, PDF extraction, TTS, Neon/Postgres and Blob credentials are server-side only.

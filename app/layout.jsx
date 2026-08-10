@@ -1,10 +1,17 @@
-import '../styles.css';
+import './globals.css';
 
 export const metadata = {
-  title: 'InspectFlow Operations',
-  description: 'Multi-tenant inspection operations console and field workflow.'
+  title: { default: 'InspectFlow', template: '%s · InspectFlow' },
+  description: 'Inspection operations, field workflows, reporting and AI-assisted administration.',
+  applicationName: 'InspectFlow'
 };
 
-export default function RootLayout({children}){
-  return <html lang="en" data-theme="dark"><body>{children}</body></html>;
+export const viewport = { themeColor: '#0b0d10', colorScheme: 'dark light' };
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>{children}</body>
+    </html>
+  );
 }
