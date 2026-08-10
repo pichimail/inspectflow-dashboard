@@ -1,13 +1,14 @@
 import './globals.css';
 import './polish.css';
+import './operational.css';
 
 export const metadata = {
   title: { default: 'InspectFlow', template: '%s · InspectFlow' },
-  description: 'Inspection operations, field workflows, reporting and AI-assisted administration.',
+  description: 'Inspection operations, field workflows, reporting and administration.',
   applicationName: 'InspectFlow'
 };
 
-export const viewport = { themeColor: '#0b0d10', colorScheme: 'dark light' };
+export const viewport = { themeColor: '#f7f8fa', colorScheme: 'light dark' };
 
 export default function RootLayout({ children }) {
   return (
