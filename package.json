@@ -1,6 +1,6 @@
 {
   "name": "inspectflow-dashboard",
-  "version": "6.3.0",
+  "version": "6.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
+    "motion": "^12.43.0",
     "next": "16.2.10",
     "postgres": "^3.4.5",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "react-dropzone": "^19.1.1"
   }
 }
