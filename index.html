@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0d1116" />
+  <meta name="color-scheme" content="dark light" />
+  <title>InspectFlow Operations</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <div id="app" class="shell">
+    <aside id="sidebar" class="sidebar" aria-label="Primary navigation">
+      <div class="brand"><span class="brand-mark">IF</span><span class="brand-copy"><strong>InspectFlow</strong><small>Operations</small></span></div>
+      <nav id="nav" class="nav"></nav>
+      <div class="side-footer">
+        <button class="nav-item" data-route="quickSMS" aria-label="Quick SMS"><span class="nav-icon">✦</span><span class="nav-label">Quick SMS</span></button>
+        <button class="nav-item" id="fieldBtn" aria-label="Open Field App"><span class="nav-icon">▯</span><span class="nav-label">Open Field App</span></button>
+        <button class="nav-item" aria-label="Log out"><span class="nav-icon">↪</span><span class="nav-label">Log out</span></button>
+      </div>
+    </aside>
+    <section class="workspace">
+      <header class="topbar">
+        <button id="sidebarToggle" class="icon-btn tooltip-bottom" type="button" data-tooltip="Collapse navigation" aria-label="Collapse navigation">☷</button>
+        <div class="crumb"><small>InspectFlow</small><strong id="crumb">Dashboard</strong></div>
+        <div class="top-spacer"></div>
+        <button id="commandBtn" class="command-btn" type="button"><span>⌕</span><span>Search or command</span><kbd>⌘K</kbd></button>
+        <button id="agentBtn" class="icon-btn accent tooltip-bottom" type="button" data-tooltip="Open InspectFlow Agent" aria-label="Open InspectFlow Agent">✦</button>
+        <button id="themeBtn" class="icon-btn tooltip-bottom" type="button" data-tooltip="Toggle theme" aria-label="Toggle theme">◐</button>
+        <select id="franchise" aria-label="Franchise scope"><option>All Franchises</option><option>Ballarat</option><option>Bendigo</option><option>Geelong</option><option>Melbourne East</option><option>Mornington Peninsula</option></select>
+        <div class="profile"><span>AM</span><div><strong>Amy Morgan</strong><small>Head Office</small></div></div>
+      </header>
+      <div class="content-grid">
+        <main id="main" tabindex="-1"></main>
+        <aside id="agent" class="agent" aria-label="InspectFlow Agent" aria-hidden="true">
+          <header class="agent-head"><div><strong>InspectFlow Agent</strong><small>Live operational context</small></div><button id="agentClose" class="icon-btn tooltip-bottom" data-tooltip="Close Agent" aria-label="Close Agent">×</button></header>
+          <div id="agentContext" class="agent-context"></div>
+          <div id="agentMessages" class="agent-messages" role="log" aria-live="polite"><article class="agent-message assistant"><small>Agent</small><p>Ask about records, reports, workflows, risks, or navigation. Actions stay inside InspectFlow.</p></article></div>
+          <div class="suggestions"><button data-prompt="Show reports that need attention">Reports needing attention</button><button data-prompt="Explain this page to a new trainee">Explain this page</button><button data-prompt="Validate the final report">Validate report</button></div>
+          <form id="agentForm" class="agent-form"><label class="sr-only" for="agentInput">Ask InspectFlow Agent</label><textarea id="agentInput" placeholder="Ask InspectFlow Agent…" rows="3"></textarea><div><span id="agentStatus">OpenRouter</span><button class="primary" type="submit">Send</button></div></form>
+        </aside>
+      </div>
+    </section>
+  </div>
+  <div id="overlay" class="overlay" hidden></div>
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="toasts" aria-live="polite"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
