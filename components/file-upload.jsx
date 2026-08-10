@@ -42,7 +42,7 @@ export default function FileUpload({
     commit(multiple?accepted.slice(0,8):accepted.slice(0,1));
   },[commit,maxSize,multiple]);
 
-  const config=useMemo(()=>({accept,maxSize,multiple,disabled,onDrop,noClick:false,noKeyboard:false}),[accept,maxSize,multiple,disabled,onDrop]);
+  const config=useMemo(()=>({accept,maxSize,multiple,disabled,onDrop,noClick:true,noKeyboard:true}),[accept,maxSize,multiple,disabled,onDrop]);
   const {getRootProps,getInputProps,isDragActive,isDragReject,open}=useDropzone(config);
 
   const remove=(event,index)=>{
@@ -50,13 +50,23 @@ export default function FileUpload({
     commit(files.filter((_,i)=>i!==index));
   };
 
+  const openPicker=()=>{if(!disabled)open()};
+  const onKeyDown=event=>{
+    if(disabled)return;
+    if(event.key==='Enter'||event.key===' '){event.preventDefault();open()}
+  };
+
   return <div className="aceternity-upload-shell">
     <div
       {...getRootProps({
         className:`aceternity-upload ${isDragActive?'is-dragging':''} ${isDragReject?'is-rejecting':''}`,
         role:'button',
+        tabIndex:disabled?-1:0,
+        'aria-disabled':disabled,
         'aria-label':title,
-        'aria-describedby':'inspectflow-upload-description'
+        'aria-describedby':'inspectflow-upload-description',
+        onClick:openPicker,
+        onKeyDown
       })}
     >
       <input {...getInputProps()} />
@@ -65,7 +75,7 @@ export default function FileUpload({
         <strong>{isDragActive?'Drop file to attach':title}</strong>
         <span id="inspectflow-upload-description">{description}</span>
       </div>
-      <button type="button" className="upload-choose" onClick={event=>{event.stopPropagation();open()}} disabled={disabled}>Choose file</button>
+      <button type="button" className="upload-choose" onClick={event=>{event.stopPropagation();openPicker()}} disabled={disabled}>Choose file</button>
     </div>
 
     {files.length>0&&<div className="upload-file-list" aria-live="polite">
