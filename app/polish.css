@@ -1,0 +1,602 @@
+/* InspectFlow V6.3 — disciplined operational UI polish
+   Readability floor: 12px captions/status metadata, 14px operational text/controls.
+   This layer intentionally overrides legacy compact sizing without changing route behavior. */
+
+:root{
+  --sidebar:260px;
+  --radius:8px;
+  --shadow:none;
+  --focus:color-mix(in srgb,var(--accent) 72%,#fff 0%);
+}
+
+html,body{
+  font-size:14px;
+  line-height:1.55;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+
+body,button,input,select,textarea{
+  font-size:14px;
+}
+
+small{
+  font-size:12px!important;
+  line-height:1.45;
+}
+
+/* Accessible, restrained focus treatment. */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible{
+  outline:2px solid var(--focus);
+  outline-offset:2px;
+  box-shadow:none!important;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible{
+  outline:2px solid var(--focus)!important;
+  outline-offset:2px;
+  border-color:var(--line-strong)!important;
+  box-shadow:none!important;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+select:focus:not(:focus-visible){
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+.search-field:focus-within,
+.agent-composer textarea:focus,
+.wizard-card input:focus,
+.wizard-card textarea:focus,
+.wizard-card select:focus{
+  box-shadow:none!important;
+}
+
+.search-field:has(input:focus-visible),
+.phone-input:has(input:focus-visible),
+.command-search:has(input:focus-visible){
+  outline:2px solid var(--focus);
+  outline-offset:2px;
+  border-color:var(--line-strong)!important;
+  box-shadow:none!important;
+}
+
+.search-field input:focus-visible,
+.phone-input input:focus-visible,
+.command-search input:focus-visible{
+  outline:none!important;
+}
+
+/* Stable shell: no floating glass, glow or detached elevation. */
+.sidebar,
+.topbar,
+.surface,
+.command-dialog,
+.detail-sheet,
+.agent-drawer,
+.modal-card,
+.contact-popover{
+  box-shadow:none!important;
+}
+
+.topbar,
+.modal-card>header,
+.modal-card>footer,
+.field-top,
+.field-nav{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+.topbar{
+  height:64px;
+  padding:0 16px;
+  background:var(--panel);
+  gap:10px;
+}
+
+.sidebar{
+  padding:12px 10px;
+}
+
+.brand{
+  height:58px;
+  gap:11px;
+  padding:0 8px 10px;
+  margin-bottom:8px;
+}
+
+.brand-mark{
+  width:36px;
+  height:36px;
+  border-radius:7px;
+  font-size:13px;
+}
+
+.brand-copy strong{font-size:14px!important;line-height:1.3}
+.brand-copy small{font-size:12px!important}
+
+.nav-group{gap:3px}
+.nav-section{
+  padding:15px 10px 7px;
+  font-size:12px!important;
+  letter-spacing:.075em;
+}
+
+.nav-link{
+  min-height:44px;
+  border-radius:7px;
+  gap:11px;
+  padding:0 11px;
+  font-size:14px!important;
+  font-weight:520;
+}
+
+.nav-link svg{width:18px;height:18px;flex:0 0 auto}
+.nav-link.active{box-shadow:none!important}
+.nav-link>em{font-size:12px!important;border-radius:5px;padding:2px 6px}
+.subnav{margin-left:20px;padding-left:11px}
+.subnav a{padding:8px 9px;font-size:13px!important;line-height:1.35}
+.sidebar-collapsed .nav-link::after{
+  font-size:12px!important;
+  padding:7px 9px;
+  border-radius:6px;
+  box-shadow:none!important;
+}
+
+.icon-button{
+  width:40px;
+  height:40px;
+  border-radius:7px;
+}
+.icon-button.accent{
+  background:var(--panel);
+  color:var(--text);
+  border-color:var(--line);
+}
+.icon-button.accent:hover{background:var(--panel-2);border-color:var(--line-strong)}
+
+[data-tip]::after{
+  font-size:12px!important;
+  font-weight:600;
+  padding:7px 9px;
+  border-radius:6px;
+  box-shadow:none!important;
+}
+
+.breadcrumb{min-width:190px;gap:8px}
+.breadcrumb span,.breadcrumb strong{font-size:14px!important}
+.breadcrumb b{font-size:12px!important}
+
+.command-trigger{
+  width:min(390px,31vw);
+  height:40px;
+  border-radius:7px;
+  padding:0 11px;
+  font-size:14px!important;
+}
+
+kbd{font-size:12px!important;border-radius:5px;padding:2px 6px}
+.top-actions{gap:7px}
+.franchise-select select{
+  height:40px;
+  min-width:182px;
+  border-radius:7px;
+  padding-left:11px;
+  font-size:14px!important;
+}
+.franchise-select svg{top:13px}
+.profile-button{
+  height:40px;
+  border-radius:7px;
+  gap:8px;
+  padding-right:10px;
+}
+.profile-button>span{width:30px;height:30px;font-size:12px!important}
+.profile-button strong{font-size:13px!important}
+.profile-button small{font-size:12px!important}
+
+.page-content{padding:24px 24px 84px}
+.stack-lg,.report-studio-page{gap:14px}
+.page-heading{gap:20px;align-items:center}
+.eyebrow{
+  font-size:12px!important;
+  letter-spacing:.075em;
+  margin-bottom:4px;
+}
+.page-heading h1{font-size:29px;line-height:1.12;letter-spacing:-.03em}
+.page-heading p{font-size:14px!important;line-height:1.5;margin-top:5px}
+.heading-actions{gap:8px}
+
+.button{
+  min-height:40px;
+  padding:0 12px;
+  border-radius:7px;
+  font-size:14px!important;
+  font-weight:650;
+}
+.surface{border-radius:8px;box-shadow:none!important}
+
+/* Dashboard information hierarchy. */
+.kpi-grid,.dashboard-split,.dashboard-grid{gap:10px}
+.kpi-card{min-height:116px;padding:15px 16px}
+.kpi-card small{font-size:12px!important}
+.kpi-card strong{font-size:30px;margin:7px 0 2px}
+.kpi-card span{font-size:12px!important}
+.section-head{min-height:58px;padding:12px 15px}
+.section-head strong{font-size:14px!important}
+.section-head small,.section-head a{font-size:12px!important}
+.count-pill,.new-chip{font-size:12px!important;border-radius:5px;padding:3px 7px}
+.attention-list{padding:0 15px}
+.attention-list button{grid-template-columns:68px 1fr 18px;gap:12px;padding:13px 0}
+.attention-list b{font-size:14px!important}
+.attention-list small{font-size:12px!important}
+.severity{
+  font-size:12px!important;
+  border-radius:5px;
+  padding:3px 7px;
+  text-transform:none;
+}
+.metric-grid>div{padding:16px}
+.metric-grid small,.metric-grid span{font-size:12px!important}
+.metric-grid strong{font-size:24px}
+.compact-list{padding:0 15px}
+.compact-list>a{gap:11px;padding:13px 0}
+.compact-list b{font-size:14px!important}
+.compact-list small{font-size:12px!important}
+.avatar{width:32px;height:32px;border-radius:7px;font-size:12px!important}
+.status{
+  min-height:25px;
+  padding:0 8px;
+  border-radius:5px;
+  font-size:12px!important;
+  font-weight:700;
+}
+.calendar-grid{gap:5px;padding:14px}
+.calendar-grid>*{height:34px;font-size:12px!important;border-radius:6px}
+.calendar-grid b{height:22px;font-size:12px!important}
+
+/* Search, toolbars and semantic operational tables. */
+.toolbar,.compact-toolbar{
+  min-height:62px;
+  padding:10px;
+  gap:9px;
+}
+.search-field{
+  height:40px;
+  border-radius:7px;
+  padding:0 11px;
+  font-size:14px!important;
+}
+.result-count{font-size:12px!important}
+.module-tabs{gap:6px}
+.module-tabs>a,.module-tabs>button{
+  height:40px;
+  border-radius:7px;
+  padding:0 12px;
+  font-size:14px!important;
+}
+.preset-row,.filter-row{gap:6px}
+.preset-row button,.filter-row button{
+  height:36px;
+  border-radius:6px;
+  padding:0 10px;
+  font-size:13px!important;
+}
+
+.record-head,.inspection-head,.people-head,.storage-head{
+  min-height:42px;
+  padding:0 14px;
+  font-size:12px!important;
+  letter-spacing:.055em;
+}
+.record-row,.inspection-row,.people-row,.storage-row{
+  min-height:64px;
+  padding:13px 14px;
+  font-size:14px!important;
+  line-height:1.45;
+}
+.record-row b,.inspection-row b,.people-row b,.storage-row b,
+.client-link,.enquiry-source b,.enquiry-price b{
+  font-size:14px!important;
+}
+.record-row small,.inspection-row small,.people-row small,.storage-row small,
+.enquiry-person>a,.enquiry-contact>span,.enquiry-source small,.enquiry-price small{
+  font-size:12px!important;
+}
+.inspection-head,.inspection-row{gap:13px}
+.people-head,.people-row{gap:13px}
+.enquiry-list{gap:8px}
+.enquiry-main{
+  min-height:86px;
+  padding:12px 12px 12px 14px;
+  gap:11px;
+}
+.channel-icon{width:34px;height:34px;border-radius:7px}
+.row-expand{width:32px;height:32px;border-radius:6px}
+.enquiry-expanded{padding:13px 14px;gap:14px}
+.enquiry-expanded small{font-size:12px!important}
+.enquiry-expanded p{font-size:14px!important}
+.record-action-row{gap:7px}
+.record-action-row button{
+  height:36px;
+  border-radius:6px;
+  padding:0 10px;
+  font-size:13px!important;
+}
+
+/* Status/tag elements remain semantic, but not decorative pills. */
+.tag-list{gap:5px}
+.tag-list em,.soft-tag,.stage-pills button,.condition-tag{
+  font-size:12px!important;
+  border-radius:5px!important;
+  padding:3px 7px;
+}
+.stage-pills{gap:6px}
+.stage-pills button{min-height:34px;padding-inline:9px}
+
+/* Dialogs, sheets and menus are attached product surfaces, not floating glass. */
+.dialog-layer,.side-sheet-layer,.modal-layer{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.command-dialog,.modal-card,.contact-popover{border-radius:8px;box-shadow:none!important}
+.command-search{height:58px;padding:0 14px}
+.command-search input{height:40px;font-size:14px!important}
+.command-results{padding:8px}
+.command-results button{height:46px;border-radius:6px;padding:0 12px;font-size:14px!important}
+.command-results small{font-size:12px!important}
+.detail-sheet>header{height:72px;padding:12px 16px}
+.detail-sheet h2{font-size:20px}
+.detail-body{padding:16px}
+.detail-grid small,.detail-block small{font-size:12px!important}
+.detail-grid b{font-size:14px!important}
+.detail-grid span{padding:12px}
+.detail-block{padding:14px;border-radius:7px}
+.modal-card>header{min-height:66px;padding:12px 16px;background:var(--panel)}
+.modal-card>header small{font-size:12px!important}
+.modal-card>header h2{font-size:20px}
+.modal-card>footer{padding:11px 16px;background:var(--panel)}
+.modal-body{padding:16px}
+.form-grid{gap:12px}
+.form-grid label,.sms-conversation label{font-size:14px!important;gap:7px}
+.form-grid input,.form-grid select,.form-grid textarea,.full-textarea,.sms-conversation textarea{
+  border-radius:7px;
+  padding:10px 11px;
+  font-size:14px!important;
+}
+.form-grid input,.form-grid select{height:42px}
+.form-caption{font-size:12px!important}
+.add-contact{height:40px;border-radius:7px;font-size:14px!important}
+.segmented{gap:6px}
+.segmented button{height:36px;font-size:13px!important}
+.timeline b,.timeline p{font-size:14px!important}
+.timeline small{font-size:12px!important}
+.sms-thread span{font-size:14px!important;border-radius:7px;padding:9px 11px}
+.sms-conversation>small{font-size:12px!important}
+
+/* Agent: functional assistant surface, not a novelty AI panel. */
+.agent-drawer{grid-template-rows:64px auto minmax(0,1fr) auto auto;box-shadow:none!important}
+.agent-drawer>header{padding:0 12px 0 16px}
+.agent-drawer header strong{font-size:14px!important}
+.agent-drawer header small{font-size:12px!important}
+.agent-context span{padding:10px 11px}
+.agent-context small{font-size:12px!important;text-transform:none}
+.agent-context b{font-size:13px!important}
+.agent-messages{padding:12px;gap:10px}
+.agent-message{padding:11px 12px;border-radius:7px}
+.agent-message small{font-size:12px!important;text-transform:none;letter-spacing:0}
+.agent-message p{font-size:14px!important;line-height:1.55;margin:4px 0}
+.agent-message-actions,.agent-suggestions{gap:7px}
+.agent-message-actions button,.agent-suggestions button{
+  min-height:36px;
+  border-radius:6px;
+  padding:0 10px;
+  font-size:13px!important;
+}
+.agent-composer{padding:11px}
+.agent-composer textarea{
+  min-height:92px;
+  border-radius:7px;
+  padding:11px;
+  font-size:14px!important;
+}
+.agent-composer>div>span{font-size:12px!important}
+.send-button{height:40px;border-radius:7px;font-size:14px!important}
+.icon-button.recording{animation:none!important;box-shadow:none!important}
+
+/* Document intake: functional extraction workflow. */
+.fetch-grid{gap:12px}
+.upload-panel{padding:26px}
+.upload-icon{width:44px;height:44px;border-radius:7px}
+.upload-panel h2{font-size:21px;margin-top:16px}
+.upload-panel>p{font-size:14px!important;line-height:1.55}
+.file-drop{min-height:142px;border-radius:7px;padding:18px}
+.file-drop span{font-size:14px!important}
+.file-drop small{font-size:12px!important}
+.privacy-note{font-size:12px!important;line-height:1.5}
+.mapping-panel{min-height:440px}
+.empty-state p{font-size:14px!important;max-width:330px}
+.mapping-list>div{padding:13px 0}
+.mapping-list small{font-size:12px!important}
+.mapping-list b{font-size:14px!important}
+.mapping-list em{font-size:12px!important}
+.inline-error{font-size:13px!important}
+
+/* Report Studio chrome: readable without changing document hierarchy. */
+.studio-toolbar{min-height:68px;padding:10px 12px}
+.studio-toolbar label{font-size:12px!important}
+.studio-toolbar select{height:40px;font-size:14px!important}
+.studio-toolbar>div:first-child>span{font-size:12px!important}
+.studio-meta span{min-width:86px;padding:0 12px}
+.studio-meta small{font-size:12px!important}
+.studio-meta b{font-size:14px!important}
+.qa-strip{min-height:50px;border-radius:7px}
+.qa-strip b{font-size:14px!important}
+.qa-strip span{font-size:12px!important}
+.report-outline header{padding:13px 14px}
+.report-outline header strong{font-size:14px!important}
+.report-outline header small{font-size:12px!important}
+.report-outline button{
+  width:calc(100% - 14px);
+  margin:2px 7px;
+  height:40px;
+  border-radius:6px;
+  padding:0 9px;
+  font-size:13px!important;
+}
+.report-outline button span{width:23px;font-size:12px!important}
+
+/* Client report typography remains document-like but never microscopic. */
+.report-brand small,.report-brand em,
+.report-summary-grid small,
+.report-kicker,
+.finding-metrics small,
+.finding-card small,
+.finding-card p,
+.finding-card em,
+.report-sheet footer,
+.doc-meta span,
+.doc-meta b,
+.evidence-placeholder,
+.doc-table span,.doc-table b{
+  font-size:12px!important;
+}
+.report-summary-grid b{font-size:13px!important}
+.report-content>p{font-size:14px!important;line-height:1.6}
+.finding-card b{font-size:14px!important}
+.document-actions button{height:40px;font-size:14px!important}
+.doc-finding p{font-size:14px!important;line-height:1.55}
+
+/* Field app follows the same readable floor and restrained geometry. */
+.field-shell{font-size:14px;line-height:1.5}
+.field-top{height:68px;background:var(--field-card)}
+.field-top>div:first-child>strong{font-size:14px!important}
+.field-sync{font-size:12px!important}
+.field-shell main{max-width:780px;padding:20px 18px 104px}
+.field-greeting>div>span,.field-completion{font-size:12px!important}
+.field-greeting h1{font-size:31px}
+.field-counters{gap:10px}
+.field-counters div,.field-calendar,.field-client,.field-financial,.field-settings-card,.wizard-card,.surface-light{
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+.field-counters div{padding:16px}
+.field-counters small{font-size:12px!important}
+.field-offline-banner{font-size:12px!important;border-radius:7px}
+.field-calendar{padding:15px}
+.field-calendar>header small,.field-calendar>header span{font-size:12px!important}
+.field-calendar>header strong{font-size:14px!important}
+.field-calendar-grid b,.field-calendar-grid span{font-size:12px!important}
+.field-calendar-grid span{border-radius:6px}
+.field-section-title small,.field-section-title>span{font-size:12px!important}
+.field-section-title h2,.field-section-title h1{font-size:18px!important}
+.field-job{min-height:78px;border-radius:8px;padding:14px;box-shadow:none!important}
+.field-job small{font-size:12px!important}
+.field-job em{font-size:12px!important;border-radius:5px;padding:4px 7px}
+.field-job-head p{font-size:14px!important}
+.field-job-head>div:last-child small,.field-job-head>div:last-child span{font-size:12px!important}
+.field-job-status{font-size:12px!important;border-radius:5px}
+.field-client-actions a{font-size:13px!important;border-radius:7px}
+.field-money-grid{border-radius:7px}
+.field-money-grid small{font-size:12px!important}
+.field-start{border-radius:7px;box-shadow:none!important;font-size:14px!important}
+.wizard-heading>span,.wizard-save{font-size:12px!important}
+.wizard-title h1{font-size:25px}
+.wizard-progress{border-radius:2px}
+.wizard-tabs button{height:40px;border-radius:7px;padding:0 11px;font-size:13px!important}
+.wizard-tabs button span{font-size:12px!important}
+.wizard-card label{font-size:14px!important;gap:7px}
+.wizard-card input,.wizard-card select,.wizard-card textarea{font-size:14px!important;border-radius:7px}
+.photo-field>span{font-size:13px!important;border-radius:7px}
+.field-disclaimer,.photo-upload>div small{font-size:12px!important}
+.photo-upload>label{border-radius:7px;font-size:13px!important}
+.field-checklist>header{min-height:48px}
+.field-checklist>header span{font-size:12px!important}
+.field-check-row{min-height:54px}
+.field-check-row>b{font-size:14px!important}
+.field-check-row label{height:54px}
+.recommendations .field-section-title button{font-size:13px!important;border-radius:7px}
+.recommendations article{border-radius:8px;padding:13px}
+.recommendations textarea{font-size:14px!important;border-radius:7px}
+.field-empty{font-size:13px!important;border-radius:7px}
+.summary-toggle{border-radius:7px}
+.summary-toggle small{font-size:12px!important}
+.summary-toggle>div{border-radius:6px}
+.summary-toggle button{font-size:13px!important}
+.field-settings-card>div:first-child>small,.setting-row small{font-size:12px!important}
+.theme-options button{font-size:13px!important;border-radius:7px}
+.field-style-preview{border-radius:7px}
+.field-style-preview span,.field-style-preview small{font-size:12px!important}
+.field-nav{height:74px;background:var(--field-card)}
+.field-nav button{font-size:12px!important}
+
+/* Network, storage, reviews and messaging. */
+.storage-browser>footer{font-size:12px!important}
+.campaign-grid,.review-grid,.sms-workspace{gap:10px}
+.campaign-card,.location-card,.sms-compose{padding:15px}
+.campaign-card h3,.location-card h3{font-size:16px}
+.campaign-card small,.location-card small,.location-card>p,.rating-bars>div{font-size:12px!important}
+.sms-compose>label{font-size:14px!important;gap:7px}
+.phone-input{height:42px;border-radius:7px}
+.phone-input span,.phone-input input{font-size:14px!important}
+.sms-compose textarea{font-size:14px!important;border-radius:7px;padding:11px}
+.sms-templates{gap:6px}
+.sms-templates button{min-height:36px;border-radius:6px;font-size:13px!important;padding:0 10px}
+.sms-send-row>span,.sms-history small{font-size:12px!important}
+.sms-history h2{font-size:18px}
+.sms-history article{padding:14px;gap:10px}
+.sms-history article b,.sms-history article p{font-size:14px!important}
+.action-grid{gap:8px}
+.action-grid>a,.action-grid>button{min-height:42px;border-radius:7px;font-size:13px!important}
+.payment-summary small,.stat-strip small{font-size:12px!important}
+.payment-summary b,.stat-strip b{font-size:17px}
+.destructive-choice span{font-size:13px!important}
+.destructive-choice b{font-size:15px}
+
+/* Remove residual glass/blur and decorative glow behavior. */
+.modal-layer{background:rgba(3,6,8,.68)}
+.field-top,.field-nav{background:var(--field-card)!important}
+.field-start,.icon-button.recording{box-shadow:none!important}
+.wizard-footer{background:var(--field-bg)!important}
+
+@media(max-width:1100px){
+  :root{--sidebar:248px}
+  .command-trigger{width:250px}
+}
+
+@media(max-width:900px){
+  .sidebar{width:270px}
+  .page-content{padding:18px 16px 86px}
+  .topbar{padding-inline:12px}
+  .record-head,.record-row{min-width:820px}
+  .inspection-head,.inspection-row{min-width:980px}
+  .people-head,.people-row{min-width:840px}
+}
+
+@media(max-width:620px){
+  .topbar{height:60px}
+  .page-content{padding:16px 12px 88px}
+  .page-heading h1{font-size:26px}
+  .page-heading p{font-size:13px!important}
+  .button{min-height:42px}
+  .kpi-card{min-height:104px}
+  .command-trigger{width:40px;height:40px;flex-basis:40px}
+  .report-studio-page .heading-actions{gap:8px}
+  .field-shell main{padding-inline:14px}
+  .field-nav{height:76px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
