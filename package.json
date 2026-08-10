@@ -1,0 +1,9 @@
+{
+  "name": "inspectflow-dashboard",
+  "version": "5.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "postgres": "^3.4.5"
+  }
+}
