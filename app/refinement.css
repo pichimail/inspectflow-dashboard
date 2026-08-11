@@ -18,8 +18,8 @@
 .document-actions button,.field-top button,.field-back,.wizard-save{box-shadow:none!important}
 .document-actions button{border-radius:7px!important}
 
-/* Native controls retain compact geometry in all modules. */
-select,input,textarea{max-border-radius:8px}
+/* Native text controls retain compact geometry without affecting radios/checkboxes. */
+input:not([type='checkbox']):not([type='radio']),select,textarea{border-radius:8px;box-shadow:none}
 
 @media(prefers-reduced-motion:reduce){
   .report-actions-menu{transition:none!important}
