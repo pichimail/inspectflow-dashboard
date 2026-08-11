@@ -1,7 +1,7 @@
 'use client';
 import {useMemo} from 'react';
 import Link from 'next/link';
-import {ArrowRight,CalendarDays,ClipboardCheck,FileText,MoreHorizontal,RefreshCw} from 'lucide-react';
+import {ArrowRight,CalendarDays,FileText,MoreHorizontal,RefreshCw} from 'lucide-react';
 import {enquiries,inspections} from '../lib/data';
 
 const money=n=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0}).format(n);
@@ -80,7 +80,7 @@ export default function Dashboard({admin=false}){
      <div className="dashboard-table" role="table" aria-label="Upcoming inspections">
       <div className="dashboard-table-head" role="row"><span>Client / property</span><span>Schedule</span><span>Inspection</span><span>Status</span><span/></div>
       {upcoming.map(item=><Link role="row" className="dashboard-table-row" href="/inspections/building-national" key={item.id}>
-       <span><b>{item.client}</b><small>{item.address}</small></span>
+       <span><b>{item.name}</b><small>{item.address}</small></span>
        <span><b>{item.time}</b><small>{item.date}</small></span>
        <span><b>{item.type}</b><small>{item.inspector}</small></span>
        <span><em className={`dashboard-status ${item.status==='Report Ready'?'ready':'pending'}`}>{item.status}</em></span>
