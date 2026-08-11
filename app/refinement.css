@@ -21,6 +21,137 @@
 /* Native text controls retain compact geometry without affecting radios/checkboxes. */
 input:not([type='checkbox']):not([type='radio']),select,textarea{border-radius:8px;box-shadow:none}
 
+/* V6.5 — reference-inspired floating operational shell. */
+:root{
+  --reference-ink:#071f22;
+  --reference-ink-2:#0a2d2f;
+  --reference-canvas:#f3f5f4;
+  --reference-board:#fbfcfb;
+  --reference-green:#2e8f72;
+  --reference-green-soft:#e5f2eb;
+  --reference-line:rgba(15,34,38,.10);
+  --reference-shadow:0 18px 44px rgba(7,24,28,.15);
+}
+
+body{background:#8d8e96!important}
+.app-shell{
+  margin:16px!important;
+  min-height:calc(100dvh - 32px)!important;
+  overflow:hidden!important;
+  border:1px solid rgba(5,22,25,.42)!important;
+  border-radius:22px!important;
+  background:var(--reference-board)!important;
+  box-shadow:var(--reference-shadow)!important;
+}
+.sidebar{
+  background:var(--reference-ink)!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
+.sidebar .brand{border-color:rgba(255,255,255,.08)!important}
+.sidebar .brand-mark{background:#4fb89a!important;color:#05251f!important;border:0!important}
+.sidebar .brand-copy strong{color:#f3faf7!important}
+.sidebar .brand-copy small,.sidebar .nav-group-toggle,.sidebar .nav-link,.sidebar .subnav a{color:#9eb0ad!important}
+.sidebar .nav-group-toggle:hover,.sidebar .nav-link:hover,.sidebar .subnav a:hover{background:rgba(255,255,255,.055)!important;color:#eef8f4!important}
+.sidebar .nav-link.active{background:rgba(75,170,144,.13)!important;color:#f3faf7!important}
+.sidebar .nav-link.active:before{background:#58bb9f!important}
+.sidebar .subnav{border-color:rgba(255,255,255,.08)!important}
+.sidebar .subnav a.active{background:rgba(255,255,255,.055)!important;color:#dff4ed!important}
+.sidebar-footer{border-color:rgba(255,255,255,.08)!important}
+
+/* Add clear disclosure chevrons to the two multi-level operational modules. */
+.sidebar a.nav-link[href^='/enquiries'],
+.sidebar a.nav-link[href^='/inspections']{padding-right:32px!important;position:relative!important}
+.sidebar a.nav-link[href^='/enquiries']::after,
+.sidebar a.nav-link[href^='/inspections']::after{
+  content:'';
+  position:absolute;
+  right:12px;
+  top:50%;
+  width:7px;
+  height:7px;
+  margin-top:-5px;
+  border-right:1.5px solid currentColor;
+  border-bottom:1.5px solid currentColor;
+  transform:rotate(45deg);
+  opacity:.68;
+  transition:transform .15s ease,opacity .15s ease;
+}
+.sidebar a.nav-link[href^='/enquiries'].active::after,
+.sidebar a.nav-link[href^='/inspections'].active::after{transform:rotate(225deg);margin-top:-1px;opacity:1}
+
+.workspace{background:var(--reference-canvas)!important}
+.topbar{height:60px!important;background:rgba(251,252,251,.98)!important;border-color:var(--reference-line)!important;padding-inline:16px!important}
+.page-content{background:var(--reference-canvas)!important;padding:22px 24px 80px!important}
+.command-trigger{height:40px!important;border-radius:11px!important;background:#f6f8f7!important;border-color:var(--reference-line)!important}
+.command-trigger:hover{background:#fff!important;border-color:rgba(15,34,38,.18)!important}
+.icon-button{border-radius:9px!important}
+.franchise-select select{height:40px!important;border-radius:10px!important;background:#fff!important}
+.profile-button{height:40px!important;border-radius:10px!important}
+
+/* Flat curved widget language used throughout operational modules. */
+.surface,.app-surface,.app-surface-flat,
+.attention-panel,.today-panel,.campaign-card,.location-card,.field-calendar,.wizard-card{
+  border-radius:15px!important;
+  border-color:var(--reference-line)!important;
+  background:#fff!important;
+  box-shadow:0 5px 18px rgba(16,42,45,.055)!important;
+}
+.section-head{min-height:58px!important;padding:12px 16px!important}
+.page-heading h1{font-size:30px!important;letter-spacing:-.03em!important}
+.page-heading p{font-size:14px!important}
+.eyebrow{font-size:12px!important}
+
+.operational-metrics{border-radius:15px!important;overflow:hidden!important;background:#fff!important;border:1px solid var(--reference-line)!important;box-shadow:0 5px 18px rgba(16,42,45,.045)!important}
+.operational-metrics>div{padding:16px 18px!important}
+.operational-metrics b{font-size:22px!important}
+.dashboard-priority-grid,.dashboard-work-grid{gap:12px!important}
+
+.compact-toolbar,.toolbar{border-radius:14px!important;border:1px solid var(--reference-line)!important;background:#fff!important;padding:10px 12px!important}
+.search-field{height:40px!important;border-radius:10px!important;background:#f7f9f8!important}
+.search-field input{font-size:14px!important}
+.preset-row button,.filter-row button{height:34px!important;border-radius:8px!important;font-size:12px!important}
+.preset-row button.active,.filter-row button.active{background:var(--reference-green-soft)!important;color:#286f5c!important;border-color:rgba(46,143,114,.18)!important}
+
+.record-table,.inspection-table,.people-table,.storage-browser{border-radius:15px!important;border:1px solid var(--reference-line)!important;background:#fff!important;overflow:hidden!important;box-shadow:0 5px 18px rgba(16,42,45,.04)!important}
+.record-head,.inspection-head,.people-head,.storage-head{min-height:44px!important;background:#f6f8f7!important}
+.record-row,.inspection-row,.people-row,.storage-row{min-height:66px!important;background:#fff!important}
+.record-row:hover,.inspection-row:hover,.people-row:hover,.storage-row:hover{background:#f8faf9!important}
+.status,.soft-tag,.tag-list em,.condition-tag{border-radius:7px!important}
+.status.booked,.status.report-ready,.status.sent,.status.active{background:#e7f3ec!important;color:#2d6e58!important}
+.status.follow-up,.status.inspection-pending,.status.draft{background:#f7efdf!important;color:#8b682d!important}
+.status.new{background:#edf1f6!important;color:#5d6f8f!important}
+.status.cancelled,.status.failed,.status.enquiry-closed,.status.quote-too-high{background:#f7e9e9!important;color:#9b4e4e!important}
+
+.button{border-radius:9px!important}
+.button.primary{background:#0b3d38!important;border-color:#0b3d38!important}
+.button.primary:hover{background:#082f2b!important}
+.button.secondary:hover,.button:hover{background:#edf1ef!important}
+
+.modal-card,.command-dialog,.detail-sheet,.contact-popover,.agent-drawer,.profile-menu,.row-menu,.filter-menu,.range-popover{border-radius:14px!important}
+.agent-message,.agent-composer textarea{border-radius:10px!important}
+.agent-context span{border-radius:9px!important}
+
+/* Keep the reference-inspired light board even when the app shell is in dark preference;
+   content tokens still adapt inside Field App and report preview surfaces. */
+html[data-theme='dark'] body{background:#101820!important}
+html[data-theme='dark'] .app-shell{background:#111b1c!important;border-color:rgba(255,255,255,.10)!important}
+html[data-theme='dark'] .workspace,html[data-theme='dark'] .page-content{background:#111719!important}
+html[data-theme='dark'] .topbar{background:#141c1e!important}
+
+@media(max-width:900px){
+  body{background:var(--reference-canvas)!important}
+  .app-shell{margin:0!important;min-height:100dvh!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+  .page-content{padding:16px 14px 86px!important}
+  .topbar{height:58px!important;padding-inline:10px!important}
+  .surface,.app-surface,.app-surface-flat,.record-table,.inspection-table,.people-table,.storage-browser{border-radius:12px!important}
+}
+
+@media(max-width:640px){
+  .page-heading h1{font-size:26px!important}
+  .compact-toolbar,.toolbar{border-radius:12px!important}
+  .dashboard-priority-grid,.dashboard-work-grid{gap:10px!important}
+}
+
 @media(prefers-reduced-motion:reduce){
-  .report-actions-menu{transition:none!important}
+  .report-actions-menu,.sidebar a.nav-link[href^='/enquiries']::after,.sidebar a.nav-link[href^='/inspections']::after{transition:none!important}
 }
