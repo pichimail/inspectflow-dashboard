@@ -11,7 +11,7 @@ function isActive(path,href){return href==='/dashboard'?path==='/dashboard':path
 
 export default function ConsoleShell({children}){
  const path=usePathname(); const router=useRouter();
- const [collapsed,setCollapsed]=useState(false),[drawer,setDrawer]=useState(false),[theme,setTheme]=useState('light'),[command,setCommand]=useState(false),[query,setQuery]=useState(''),[agent,setAgent]=useState(false),[agentWidth,setAgentWidth]=useState(390),[messages,setMessages]=useState([{role:'assistant',text:'Ask about records, reports, workflow, or navigation. Actions stay inside InspectFlow.'}]),[agentText,setAgentText]=useState(''),[busy,setBusy]=useState(false),[franchise,setFranchise]=useState('All Franchises'),[voiceBusy,setVoiceBusy]=useState(false),[voiceListening,setVoiceListening]=useState(false),[profileOpen,setProfileOpen]=useState(false),[openGroups,setOpenGroups]=useState({Overview:true,Operations:true,Network:true});
+ const [collapsed,setCollapsed]=useState(false),[drawer,setDrawer]=useState(false),[theme,setTheme]=useState('light'),[command,setCommand]=useState(false),[query,setQuery]=useState(''),[agent,setAgent]=useState(false),[agentWidth,setAgentWidth]=useState(390),[messages,setMessages]=useState([{role:'assistant',text:'Ask about records, reports, workflow, or navigation. Actions stay inside InspectFlow.'}]),[agentText,setAgentText]=useState(''),[busy,setBusy]=useState(false),[franchise,setFranchise]=useState('All Franchises'),[voiceBusy,setVoiceBusy]=useState(false),[voiceListening,setVoiceListening]=useState(false),[profileOpen,setProfileOpen]=useState(false),[openParents,setOpenParents]=useState({Enquiries:true,Inspections:true});
  const drag=useRef(null),profileRef=useRef(null);
  const currentRoute=useMemo(()=>[...ROUTES,...FOOTER_ROUTES].find(r=>isActive(path,r.href)),[path]);
  const current=currentRoute?.label||'InspectFlow';
@@ -20,7 +20,7 @@ export default function ConsoleShell({children}){
 
  useEffect(()=>{document.documentElement.dataset.theme=theme;localStorage.setItem('inspectflow-theme',theme)},[theme]);
  useEffect(()=>{const saved=localStorage.getItem('inspectflow-theme');if(saved)setTheme(saved);if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})},[]);
- useEffect(()=>{const active=ROUTES.find(r=>isActive(path,r.href));if(active)setOpenGroups(g=>({...g,[active.section]:true}));setDrawer(false);setProfileOpen(false)},[path]);
+ useEffect(()=>{const active=ROUTES.find(r=>isActive(path,r.href));if(active?.children)setOpenParents(p=>({...p,[active.label]:true}));setDrawer(false);setProfileOpen(false)},[path]);
  useEffect(()=>{const onKey=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setCommand(v=>!v)}if(e.key==='Escape'){setCommand(false);setDrawer(false);setProfileOpen(false)}};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[]);
  useEffect(()=>{const onPointer=e=>{if(profileOpen&&!profileRef.current?.contains(e.target))setProfileOpen(false)};document.addEventListener('pointerdown',onPointer);return()=>document.removeEventListener('pointerdown',onPointer)},[profileOpen]);
  useEffect(()=>{const open=e=>{setAgent(true);if(e.detail?.prompt)setAgentText(e.detail.prompt)};window.addEventListener('inspectflow:open-agent',open);return()=>window.removeEventListener('inspectflow:open-agent',open)},[]);
@@ -35,30 +35,36 @@ export default function ConsoleShell({children}){
  async function startVoice(){
   if(voiceListening||busy)return;
   if(navigator.mediaDevices?.getUserMedia&&window.MediaRecorder){
-    try{
-      const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,channelCount:1}});
-      const mime=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'].find(x=>MediaRecorder.isTypeSupported(x))||'';
-      const recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);const chunks=[];setVoiceListening(true);
-      recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
-      recorder.onstop=async()=>{try{const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'});const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));const data=btoa(binary);const format=(recorder.mimeType||'audio/webm').includes('ogg')?'ogg':'webm';const r=await fetch('/api/ai/stt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data,format})});const out=await r.json();if(!r.ok||!out.text)throw new Error(out.error||'Transcription failed');setAgentText(out.text);await ask(out.text)}catch(e){setMessages(m=>[...m,{role:'assistant',text:`Voice transcription failed: ${e.message||'Please try again.'}`}])}finally{stream.getTracks().forEach(t=>t.stop());setVoiceListening(false)}};
-      recorder.start();setTimeout(()=>{if(recorder.state==='recording')recorder.stop()},7000);return;
-    }catch{setVoiceListening(false)}
+   try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,channelCount:1}});
+    const mime=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'].find(x=>MediaRecorder.isTypeSupported(x))||'';
+    const recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);const chunks=[];setVoiceListening(true);
+    recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+    recorder.onstop=async()=>{try{const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'});const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));const data=btoa(binary);const format=(recorder.mimeType||'audio/webm').includes('ogg')?'ogg':'webm';const r=await fetch('/api/ai/stt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data,format})});const out=await r.json();if(!r.ok||!out.text)throw new Error(out.error||'Transcription failed');setAgentText(out.text);await ask(out.text)}catch(e){setMessages(m=>[...m,{role:'assistant',text:`Voice transcription failed: ${e.message||'Please try again.'}`}])}finally{stream.getTracks().forEach(t=>t.stop());setVoiceListening(false)}};
+    recorder.start();setTimeout(()=>{if(recorder.state==='recording')recorder.stop()},7000);return;
+   }catch{setVoiceListening(false)}
   }
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){setMessages(m=>[...m,{role:'assistant',text:'Microphone transcription is unavailable in this browser.'}]);return}const rec=new SR();rec.lang='en-AU';rec.interimResults=false;setVoiceListening(true);rec.onresult=e=>{const t=e.results[0][0].transcript;setAgentText(t);ask(t)};rec.onerror=()=>setVoiceListening(false);rec.onend=()=>setVoiceListening(false);rec.start()
  }
 
- return <div className={`app-shell ${collapsed?'sidebar-collapsed':''}`}>
+ return <div className={`app-viewport ${collapsed?'sidebar-collapsed':''}`}>
+  <div className="app-frame">
   <a className="skip-link" href="#content">Skip to content</a>
   <aside className={`sidebar ${drawer?'mobile-open':''}`} aria-label="Primary navigation">
    <div className="brand"><span className="brand-mark">IF</span><span className="brand-copy"><strong>InspectFlow</strong><small>Operations</small></span></div>
    <nav className="sidebar-nav">
     {groups.map(section=>{
-      const routes=ROUTES.filter(r=>r.section===section);
-      const open=collapsed||openGroups[section];
-      return <div key={section} className="nav-group">
-       {!collapsed&&<button type="button" className="nav-group-toggle" aria-expanded={Boolean(openGroups[section])} onClick={()=>setOpenGroups(g=>({...g,[section]:!g[section]}))}><span>{section}</span><ChevronDown size={14} aria-hidden="true"/></button>}
-       {open&&<div className="nav-group-items">{routes.map(r=>{const Icon=r.icon;const active=isActive(path,r.href);return <div key={r.href}><Link href={r.href} className={`nav-link ${active?'active':''}`} data-collapse-tip={r.label}><Icon size={18}/><span>{r.label}</span>{r.badge&&<em>{r.badge}</em>}</Link>{!collapsed&&r.children&&active&&<div className="subnav">{r.children.map(([href,label])=><Link className={path===href?'active':''} key={href} href={href}>{label}</Link>)}</div>}</div>})}</div>}
-      </div>
+     const routes=ROUTES.filter(r=>r.section===section);
+     return <div key={section} className="nav-group">
+      {!collapsed&&<div className="nav-group-label">{section}</div>}
+      <div className="nav-group-items">{routes.map(r=>{const Icon=r.icon;const active=isActive(path,r.href);const hasChildren=Boolean(r.children?.length);const expanded=Boolean(openParents[r.label]);return <div key={r.href} className={`nav-parent ${active?'active-parent':''}`}>
+       <div className="nav-parent-row">
+        <Link href={r.href} className={`nav-link ${active?'active':''}`} data-collapse-tip={r.label}><Icon size={18}/><span>{r.label}</span>{r.badge&&<em>{r.badge}</em>}</Link>
+        {!collapsed&&hasChildren&&<button type="button" className="nav-parent-toggle" aria-label={`Toggle ${r.label}`} aria-expanded={expanded} onClick={()=>setOpenParents(p=>({...p,[r.label]:!p[r.label]}))}><ChevronDown size={15}/></button>}
+       </div>
+       {!collapsed&&hasChildren&&expanded&&<div className="subnav">{r.children.map(([href,label])=><Link className={path===href?'active':''} key={href} href={href}>{label}</Link>)}</div>}
+      </div>})}</div>
+     </div>
     })}
    </nav>
    <div className="sidebar-footer">{FOOTER_ROUTES.map(r=>{const Icon=r.icon;return <Link key={r.href} href={r.href} target={r.external?'_blank':undefined} className={`nav-link ${isActive(path,r.href)?'active':''}`} data-collapse-tip={r.label}><Icon size={18}/><span>{r.label}</span>{r.badge&&<em>{r.badge}</em>}</Link>})}</div>
@@ -92,5 +98,6 @@ export default function ConsoleShell({children}){
   {command&&<div className="dialog-layer" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setCommand(false)}}><section className="command-dialog" role="dialog" aria-modal="true" aria-labelledby="command-title"><h2 id="command-title" className="sr-only">Search InspectFlow</h2><div className="command-search"><Search size={18}/><input autoFocus value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search modules and actions"/><kbd>ESC</kbd></div><div className="command-results">{searchItems.length?searchItems.map(x=><button type="button" key={x.href} onClick={()=>go(x.href)}><span>{x.label}</span><small>Open</small></button>):<p className="command-empty">No matching modules or actions.</p>}</div></section></div>}
 
   {agent&&<aside className="agent-drawer" style={{width:agentWidth}} aria-label="InspectFlow assistant"><div className="agent-resizer" role="separator" aria-orientation="vertical" tabIndex={0} onPointerDown={e=>{drag.current=true;e.currentTarget.setPointerCapture?.(e.pointerId)}}/><header><div><strong>InspectFlow assistant</strong><small>Current operational context</small></div><TipButton label="Close assistant" side="bottom" onClick={()=>setAgent(false)}><X size={16}/></TipButton></header><div className="agent-context"><span><small>Module</small><b>{current}</b></span><span><small>Franchise</small><b>{franchise}</b></span><span><small>Open work</small><b>{context.reportsPending+context.inspections}</b></span></div><div className="agent-messages">{messages.map((m,i)=><article key={i} className={`agent-message ${m.role}`}><small>{m.role==='assistant'?'Assistant':'You'}</small><p>{m.text}</p>{m.role==='assistant'&&<div className="agent-message-actions"><button type="button" onClick={()=>speak(m.text)} disabled={voiceBusy}><Volume2 size={14}/>Speak</button>{(m.actions||[]).map(a=><button type="button" key={a.id||a.target} onClick={()=>go(a.target)}>{a.label}</button>)}</div>}</article>)}</div><div className="agent-suggestions">{['Show reports needing attention','Explain this page to a trainee','Open document intake'].map(s=><button type="button" key={s} onClick={()=>ask(s)}>{s}</button>)}</div><form className="agent-composer" onSubmit={e=>{e.preventDefault();ask()}}><textarea value={agentText} onChange={e=>setAgentText(e.target.value)} placeholder="Ask about this workflow…"/><div><span>{voiceListening?'Listening…':busy?'Working…':'Current page context included'}</span><div><TipButton label={voiceListening?'Listening…':'Voice command'} side="top" className={voiceListening?'recording':''} onClick={startVoice}><Mic size={16}/></TipButton><button type="submit" className="send-button" disabled={busy||!agentText.trim()}><Send size={15}/>Send</button></div></div></form></aside>}
+  </div>
  </div>
 }
