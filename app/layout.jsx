@@ -2,6 +2,7 @@ import './globals.css';
 import './polish.css';
 import './operational.css';
 import './refinement.css';
+import './reference-dashboard.css';
 
 export const metadata = {
   title: { default: 'InspectFlow', template: '%s · InspectFlow' },
