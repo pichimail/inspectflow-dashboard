@@ -1,0 +1,291 @@
+/* InspectFlow V7 — deterministic application theme system */
+:root,
+html[data-theme='light']{
+  color-scheme:light;
+  --ui-bg:#f3f6f5;
+  --ui-canvas:#f6f8f7;
+  --ui-surface:#ffffff;
+  --ui-surface-subtle:#f8faf9;
+  --ui-surface-raised:#ffffff;
+  --ui-control:#fbfcfb;
+  --ui-control-hover:#eef3f1;
+  --ui-sidebar:#0b2524;
+  --ui-sidebar-hover:rgba(255,255,255,.055);
+  --ui-sidebar-active:rgba(111,209,164,.12);
+  --ui-text:#17211f;
+  --ui-text-secondary:#56635f;
+  --ui-muted:#7c8a85;
+  --ui-border:#dce4e1;
+  --ui-border-strong:#c8d3cf;
+  --ui-accent:#116b5f;
+  --ui-accent-hover:#0b5c52;
+  --ui-accent-contrast:#f6fffb;
+  --ui-accent-soft:#e1f0eb;
+  --ui-success:#2f7f5a;
+  --ui-success-soft:#e6f3eb;
+  --ui-warning:#94631e;
+  --ui-warning-soft:#f7eedf;
+  --ui-danger:#b85151;
+  --ui-danger-soft:#f8e8e8;
+  --ui-info:#46799d;
+  --ui-info-soft:#e8f0f5;
+  --ui-focus:#177e70;
+  --ui-shadow:0 1px 2px rgba(20,35,30,.04),0 8px 24px rgba(20,35,30,.035);
+}
+
+html[data-theme='dark']{
+  color-scheme:dark;
+  --ui-bg:#0d1515;
+  --ui-canvas:#101918;
+  --ui-surface:#151f1e;
+  --ui-surface-subtle:#192523;
+  --ui-surface-raised:#1c2927;
+  --ui-control:#162220;
+  --ui-control-hover:#22312e;
+  --ui-sidebar:#071b1a;
+  --ui-sidebar-hover:rgba(255,255,255,.06);
+  --ui-sidebar-active:rgba(104,204,160,.13);
+  --ui-text:#eef5f2;
+  --ui-text-secondary:#bdcbc6;
+  --ui-muted:#8fa19b;
+  --ui-border:#2a3a36;
+  --ui-border-strong:#3d504a;
+  --ui-accent:#67c9a5;
+  --ui-accent-hover:#78d8b4;
+  --ui-accent-contrast:#09241e;
+  --ui-accent-soft:rgba(103,201,165,.13);
+  --ui-success:#81c99e;
+  --ui-success-soft:rgba(92,183,126,.14);
+  --ui-warning:#e0b166;
+  --ui-warning-soft:rgba(211,157,77,.14);
+  --ui-danger:#e08a8a;
+  --ui-danger-soft:rgba(210,105,105,.14);
+  --ui-info:#8fb4d0;
+  --ui-info-soft:rgba(104,154,192,.14);
+  --ui-focus:#7bd5b5;
+  --ui-shadow:none;
+}
+
+/* Map every legacy semantic token onto one deterministic theme source. */
+:root,
+html[data-theme='light'],
+html[data-theme='dark']{
+  --bg:var(--ui-bg);
+  --panel:var(--ui-surface);
+  --panel-2:var(--ui-surface-subtle);
+  --panel-3:var(--ui-control-hover);
+  --text:var(--ui-text);
+  --muted:var(--ui-muted);
+  --line:var(--ui-border);
+  --line-strong:var(--ui-border-strong);
+  --accent:var(--ui-accent);
+  --accent-strong:var(--ui-accent-hover);
+  --accent-soft:var(--ui-accent-soft);
+  --amber:var(--ui-warning);
+  --amber-soft:var(--ui-warning-soft);
+  --green:var(--ui-success);
+  --green-soft:var(--ui-success-soft);
+  --red:var(--ui-danger);
+  --red-soft:var(--ui-danger-soft);
+  --blue:var(--ui-info);
+  --blue-soft:var(--ui-info-soft);
+  --shadow:var(--ui-shadow);
+  --ref-stage:var(--ui-bg);
+  --ref-stage-dark:var(--ui-sidebar);
+  --ref-sidebar:var(--ui-sidebar);
+  --ref-sidebar-2:var(--ui-sidebar);
+  --ref-canvas:var(--ui-canvas);
+  --ref-board:var(--ui-canvas);
+  --ref-panel:var(--ui-surface);
+  --ref-line:var(--ui-border);
+  --ref-text:var(--ui-text);
+  --ref-muted:var(--ui-muted);
+  --ref-green:var(--ui-accent);
+  --ref-green-dark:color-mix(in srgb,var(--ui-accent) 48%,#08231f);
+  --ref-mint:var(--ui-success-soft);
+  --ref-sand:var(--ui-warning-soft);
+  --ref-coral:var(--ui-danger-soft);
+  --ref-blue:var(--ui-info-soft);
+  --ref-shadow:none;
+  --ref-widget-shadow:var(--ui-shadow);
+}
+
+html,body{background:var(--ui-bg)!important;color:var(--ui-text)!important}
+.workspace,.page-content{background:var(--ui-canvas)!important;color:var(--ui-text)!important}
+.topbar{background:var(--ui-canvas)!important;border-color:var(--ui-border)!important;backdrop-filter:none!important}
+.sidebar{background:var(--ui-sidebar)!important}
+
+/* Universal readable surfaces. */
+.surface,
+.compact-toolbar,
+.enquiry-record,
+.inspection-table,
+.people-table,
+.storage-browser,
+.campaign-card,
+.location-card,
+.modal-card,
+.detail-sheet,
+.filter-menu,
+.range-popover,
+.profile-menu,
+.row-menu,
+.command-dialog,
+.agent-drawer,
+.studio-toolbar,
+.report-workspace,
+.stat-strip{
+  background:var(--ui-surface)!important;
+  color:var(--ui-text)!important;
+  border-color:var(--ui-border)!important;
+  box-shadow:var(--ui-shadow)!important;
+}
+
+.page-heading h1,.page-heading h2,.page-heading h3,
+.section-head strong,.people-row b,.storage-row b,.inspection-row b,.enquiry-record b,
+.modal-card h2,.detail-sheet h2,.campaign-card h3,.location-card h3{color:var(--ui-text)!important}
+.page-heading p,.eyebrow,.result-count,.people-row small,.storage-row,.inspection-row small,
+.enquiry-record small,.campaign-card small,.location-card small,.breadcrumb span,.profile-button small,
+.form-caption,.menu-label,.studio-meta small{color:var(--ui-muted)!important}
+
+/* Search, fields and selects never flip to an opposite theme on hover/focus. */
+.command-trigger,
+.search-field,
+.field-control,
+input,
+select,
+textarea,
+.form-grid input,
+.form-grid select,
+.form-grid textarea,
+.range-fields input,
+.filter-form select,
+.full-textarea,
+.agent-composer textarea{
+  background:var(--ui-control)!important;
+  color:var(--ui-text)!important;
+  border-color:var(--ui-border)!important;
+  box-shadow:none!important;
+}
+.command-trigger:hover,
+.search-field:hover,
+.search-field:focus-within,
+.field-control:hover,
+input:hover,
+select:hover,
+textarea:hover,
+.form-grid input:hover,
+.form-grid select:hover,
+.form-grid textarea:hover{
+  background:var(--ui-control-hover)!important;
+  color:var(--ui-text)!important;
+  border-color:var(--ui-border-strong)!important;
+}
+.search-field input{background:transparent!important;color:var(--ui-text)!important}
+.search-field input::placeholder,.command-trigger,.agent-composer textarea::placeholder,input::placeholder,textarea::placeholder{color:var(--ui-muted)!important;opacity:1}
+select option{background:var(--ui-surface)!important;color:var(--ui-text)!important}
+kbd{background:var(--ui-surface-subtle)!important;color:var(--ui-muted)!important;border-color:var(--ui-border)!important}
+
+/* Buttons: stable across both themes. */
+.button,.icon-button,.profile-button,.round-action,.more-button,.row-expand,
+.filter-row button,.preset-row button,.module-tabs a,.module-tabs button,.segmented button,
+.stage-pills button,.action-grid button,.action-grid a,.add-contact{
+  color:var(--ui-text)!important;
+  border-color:var(--ui-border)!important;
+}
+.button:not(.primary),.icon-button,.profile-button,.round-action,.more-button,.row-expand,.add-contact{
+  background:transparent!important;
+}
+.button:not(.primary):hover,.icon-button:hover,.profile-button:hover,.round-action:hover,.more-button:hover,.row-expand:hover,.add-contact:hover{
+  background:var(--ui-control-hover)!important;
+  color:var(--ui-text)!important;
+  border-color:var(--ui-border-strong)!important;
+}
+.button.primary,.record-action-row .accent,.send-button{
+  background:var(--ui-accent)!important;
+  border-color:var(--ui-accent)!important;
+  color:var(--ui-accent-contrast)!important;
+}
+.button.primary:hover,.record-action-row .accent:hover,.send-button:hover{background:var(--ui-accent-hover)!important;border-color:var(--ui-accent-hover)!important}
+.active-control,.preset-row button.active,.filter-row button.active,.module-tabs .active,.segmented .active,.stage-pills .active{
+  background:var(--ui-accent-soft)!important;
+  color:var(--ui-accent)!important;
+  border-color:color-mix(in srgb,var(--ui-accent) 32%,var(--ui-border))!important;
+}
+
+/* Tables and operational rows. */
+.people-head,.storage-head,.inspection-head{
+  background:var(--ui-surface-subtle)!important;
+  color:var(--ui-muted)!important;
+  border-color:var(--ui-border)!important;
+}
+.people-row,.storage-row,.inspection-row,.enquiry-main,.enquiry-expanded{
+  background:var(--ui-surface)!important;
+  color:var(--ui-text)!important;
+  border-color:var(--ui-border)!important;
+}
+.people-row:hover,.storage-row:hover,.inspection-row:hover,.enquiry-record:hover .enquiry-main{
+  background:var(--ui-control-hover)!important;
+}
+.people-row>span,.storage-row>span,.inspection-row>span,.enquiry-person,.enquiry-contact,.enquiry-source,.enquiry-price{color:var(--ui-text-secondary)!important}
+.tag-list em,.soft-tag{background:var(--ui-surface-subtle)!important;color:var(--ui-text-secondary)!important;border:1px solid var(--ui-border)!important}
+.storage-progress{background:var(--ui-control-hover)!important}.storage-progress i{background:var(--ui-accent)!important}
+
+/* Popovers, menus and sheets. */
+.filter-menu,.range-popover,.row-menu,.profile-menu,.contact-popover{
+  background:var(--ui-surface-raised)!important;
+  color:var(--ui-text)!important;
+  border:1px solid var(--ui-border)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.16)!important;
+}
+.filter-menu button,.row-menu button,.row-menu a,.profile-menu button,.contact-popover button{color:var(--ui-text)!important;background:transparent!important}
+.filter-menu button:hover,.row-menu button:hover,.row-menu a:hover,.profile-menu button:hover,.contact-popover button:hover{background:var(--ui-control-hover)!important}
+.filter-menu .selected{background:var(--ui-accent-soft)!important;color:var(--ui-accent)!important}
+
+/* Semantic state stays semantic, not decorative. */
+.status.booked,.status.report-ready,.status.sent,.status.active{background:var(--ui-success-soft)!important;color:var(--ui-success)!important}
+.status.follow-up,.status.inspection-pending{background:var(--ui-warning-soft)!important;color:var(--ui-warning)!important}
+.status.cancelled,.status.failed{background:var(--ui-danger-soft)!important;color:var(--ui-danger)!important}
+.status.new{background:var(--ui-info-soft)!important;color:var(--ui-info)!important}
+.severity.high{background:var(--ui-danger-soft)!important;color:var(--ui-danger)!important}.severity.medium{background:var(--ui-warning-soft)!important;color:var(--ui-warning)!important}
+
+/* Dashboard uses the same theme tokens rather than its own hard-coded palette. */
+.dashboard-board,.dashboard-widget,.dashboard-metric{background:var(--ui-surface)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important}
+.dashboard-metric-featured,.dashboard-region-widget{background:color-mix(in srgb,var(--ui-accent) 32%,var(--ui-sidebar))!important;color:#f5fffb!important}
+.dashboard-load-widget{background:var(--ui-success-soft)!important}
+.dashboard-widget-head,.dashboard-table-head,.dashboard-table-row{border-color:var(--ui-border)!important}
+.dashboard-table-row:hover{background:var(--ui-control-hover)!important}
+
+/* Studio chrome follows application theme. The report paper itself is intentionally print-light. */
+.report-outline{background:var(--ui-surface-subtle)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important}
+.report-outline header,.report-outline button{border-color:var(--ui-border)!important;color:var(--ui-text-secondary)!important}
+.report-outline button:hover{background:var(--ui-control-hover)!important;color:var(--ui-text)!important}
+.report-outline button.active{background:var(--ui-accent-soft)!important;color:var(--ui-accent)!important}
+.report-canvas{background:color-mix(in srgb,var(--ui-canvas) 82%,var(--ui-border))!important}
+.splitter{background:var(--ui-border)!important}.splitter:hover{background:var(--ui-accent)!important}
+.qa-strip{background:var(--ui-success-soft)!important;color:var(--ui-success)!important;border-color:color-mix(in srgb,var(--ui-success) 28%,var(--ui-border))!important}
+
+/* Assistant must not become a luminous opposite-theme surface. */
+.agent-drawer header,.agent-context,.agent-composer{background:var(--ui-surface)!important;border-color:var(--ui-border)!important}
+.agent-message.assistant{background:var(--ui-surface-subtle)!important;color:var(--ui-text)!important}
+.agent-message.user{background:var(--ui-accent-soft)!important;color:var(--ui-text)!important}
+.agent-suggestions button,.agent-message-actions button{background:transparent!important;color:var(--ui-text-secondary)!important;border-color:var(--ui-border)!important}
+.agent-suggestions button:hover,.agent-message-actions button:hover{background:var(--ui-control-hover)!important;color:var(--ui-text)!important}
+
+/* Focus is deterministic and accessible. Mouse/touch never receives a broad glow. */
+button:focus,input:focus,select:focus,textarea:focus,a:focus{box-shadow:none!important}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[role='button']:focus-visible{
+  outline:2px solid var(--ui-focus)!important;
+  outline-offset:2px!important;
+  box-shadow:none!important;
+}
+
+/* Tooltips remain readable in both appearances. */
+[data-tip]::after,.sidebar-collapsed .nav-link::after{background:#08100f!important;color:#f8fffc!important;border-color:#2b3a36!important;box-shadow:0 8px 20px rgba(0,0,0,.25)!important}
+
+@media(max-width:900px){
+  .page-content{background:var(--ui-canvas)!important}
+  .surface,.compact-toolbar,.enquiry-record,.inspection-table,.people-table,.storage-browser{border-radius:10px!important}
+}
+
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
