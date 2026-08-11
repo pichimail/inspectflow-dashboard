@@ -1,5 +1,5 @@
 'use client';
-import {useEffect,useMemo,useRef,useState} from 'react';
+import {useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import Link from 'next/link';
 import {usePathname,useRouter} from 'next/navigation';
 import {PanelLeftClose,PanelLeftOpen,Search,MessageSquareText,Sun,Moon,RefreshCw,Mic,Volume2,X,Send,ChevronDown,Settings,FileInput,ShieldCheck} from 'lucide-react';
@@ -18,8 +18,8 @@ export default function ConsoleShell({children}){
  const context=useMemo(()=>({route:path,franchise,enquiries:enquiries.length,inspections:inspections.length,reportsPending:inspections.filter(x=>x.report!=='Submitted').length,unassigned:inspections.filter(x=>x.inspector==='No Inspector').length}),[path,franchise]);
  const groups=['Overview','Operations','Network'];
 
- useEffect(()=>{document.documentElement.dataset.theme=theme;localStorage.setItem('inspectflow-theme',theme)},[theme]);
- useEffect(()=>{const saved=localStorage.getItem('inspectflow-theme');if(saved)setTheme(saved);if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})},[]);
+ useLayoutEffect(()=>{const initial=document.documentElement.dataset.theme==='dark'?'dark':'light';setTheme(initial);document.documentElement.style.colorScheme=initial},[]);
+ useEffect(()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})},[]);
  useEffect(()=>{const active=ROUTES.find(r=>isActive(path,r.href));if(active?.children)setOpenParents(p=>({...p,[active.label]:true}));setDrawer(false);setProfileOpen(false)},[path]);
  useEffect(()=>{const onKey=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setCommand(v=>!v)}if(e.key==='Escape'){setCommand(false);setDrawer(false);setProfileOpen(false)}};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[]);
  useEffect(()=>{const onPointer=e=>{if(profileOpen&&!profileRef.current?.contains(e.target))setProfileOpen(false)};document.addEventListener('pointerdown',onPointer);return()=>document.removeEventListener('pointerdown',onPointer)},[profileOpen]);
@@ -28,7 +28,8 @@ export default function ConsoleShell({children}){
 
  const go=target=>{if(!SAFE_AI_ROUTES.has(target))return;setCommand(false);setDrawer(false);setProfileOpen(false);router.push(target)};
  const searchItems=useMemo(()=>[...ROUTES.flatMap(r=>[{href:r.href,label:r.label},...(r.children||[]).map(([href,label])=>({href,label:`${r.label} · ${label}`}))]),...FOOTER_ROUTES].filter(x=>x.label.toLowerCase().includes(query.toLowerCase())),[query]);
- const toggleTheme=()=>setTheme(theme==='dark'?'light':'dark');
+ const applyTheme=next=>{const safe=next==='dark'?'dark':'light';document.documentElement.dataset.theme=safe;document.documentElement.style.colorScheme=safe;try{localStorage.setItem('inspectflow-theme',safe)}catch{}setTheme(safe)};
+ const toggleTheme=()=>applyTheme(theme==='dark'?'light':'dark');
 
  async function ask(text=agentText){const clean=text.trim();if(!clean||busy)return;setAgent(true);setMessages(m=>[...m,{role:'user',text:clean}]);setAgentText('');setBusy(true);try{const res=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:clean,context})});const data=await res.json();setMessages(m=>[...m,{role:'assistant',text:data.message||'No response returned.',actions:data.actions||[]}])}catch{setMessages(m=>[...m,{role:'assistant',text:'The assistant service is temporarily unavailable. You can continue using InspectFlow.'}])}finally{setBusy(false)}}
  async function speak(text){setVoiceBusy(true);try{const r=await fetch('/api/ai/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});if(!r.ok)throw new Error();const blob=await r.blob();const url=URL.createObjectURL(blob);const audio=new Audio(url);audio.onended=()=>{URL.revokeObjectURL(url);setVoiceBusy(false)};await audio.play()}catch{if('speechSynthesis'in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(text))}setVoiceBusy(false)}}
@@ -53,19 +54,7 @@ export default function ConsoleShell({children}){
   <aside className={`sidebar ${drawer?'mobile-open':''}`} aria-label="Primary navigation">
    <div className="brand"><span className="brand-mark">IF</span><span className="brand-copy"><strong>InspectFlow</strong><small>Operations</small></span></div>
    <nav className="sidebar-nav">
-    {groups.map(section=>{
-     const routes=ROUTES.filter(r=>r.section===section);
-     return <div key={section} className="nav-group">
-      {!collapsed&&<div className="nav-group-label">{section}</div>}
-      <div className="nav-group-items">{routes.map(r=>{const Icon=r.icon;const active=isActive(path,r.href);const hasChildren=Boolean(r.children?.length);const expanded=Boolean(openParents[r.label]);return <div key={r.href} className={`nav-parent ${active?'active-parent':''}`}>
-       <div className="nav-parent-row">
-        <Link href={r.href} className={`nav-link ${active?'active':''}`} data-collapse-tip={r.label}><Icon size={18}/><span>{r.label}</span>{r.badge&&<em>{r.badge}</em>}</Link>
-        {!collapsed&&hasChildren&&<button type="button" className="nav-parent-toggle" aria-label={`Toggle ${r.label}`} aria-expanded={expanded} onClick={()=>setOpenParents(p=>({...p,[r.label]:!p[r.label]}))}><ChevronDown size={15}/></button>}
-       </div>
-       {!collapsed&&hasChildren&&expanded&&<div className="subnav">{r.children.map(([href,label])=><Link className={path===href?'active':''} key={href} href={href}>{label}</Link>)}</div>}
-      </div>})}</div>
-     </div>
-    })}
+    {groups.map(section=>{const routes=ROUTES.filter(r=>r.section===section);return <div key={section} className="nav-group"><div className="nav-group-label">{section}</div><div className="nav-group-items">{routes.map(r=>{const Icon=r.icon;const active=isActive(path,r.href);const hasChildren=Boolean(r.children?.length);const expanded=Boolean(openParents[r.label]);return <div key={r.href} className={`nav-parent ${active?'active-parent':''}`}><div className="nav-parent-row"><Link href={r.href} className={`nav-link ${active?'active':''}`} data-collapse-tip={r.label}><Icon size={18}/><span>{r.label}</span>{r.badge&&<em>{r.badge}</em>}</Link>{!collapsed&&hasChildren&&<button type="button" className="nav-parent-toggle" aria-label={`Toggle ${r.label}`} aria-expanded={expanded} onClick={()=>setOpenParents(p=>({...p,[r.label]:!p[r.label]}))}><ChevronDown size={15}/></button>}</div>{!collapsed&&hasChildren&&expanded&&<div className="subnav">{r.children.map(([href,label])=><Link className={path===href?'active':''} key={href} href={href}>{label}</Link>)}</div>}</div>})}</div></div>})}
    </nav>
    <div className="sidebar-footer">{FOOTER_ROUTES.map(r=>{const Icon=r.icon;return <Link key={r.href} href={r.href} target={r.external?'_blank':undefined} className={`nav-link ${isActive(path,r.href)?'active':''}`} data-collapse-tip={r.label}><Icon size={18}/><span>{r.label}</span>{r.badge&&<em>{r.badge}</em>}</Link>})}</div>
   </aside>
@@ -81,15 +70,7 @@ export default function ConsoleShell({children}){
      <TipButton label="Open InspectFlow assistant" side="bottom" onClick={()=>setAgent(true)}><MessageSquareText size={17}/></TipButton>
      <TipButton label={`Switch to ${theme==='dark'?'light':'dark'} mode`} side="bottom" onClick={toggleTheme}>{theme==='dark'?<Sun size={17}/>:<Moon size={17}/>}</TipButton>
      <label className="franchise-select"><span className="sr-only">Franchise scope</span><select value={franchise} onChange={e=>setFranchise(e.target.value)}>{franchises.map(f=><option key={f}>{f}</option>)}</select><ChevronDown size={14}/></label>
-     <div className="profile-menu-wrap" ref={profileRef}>
-      <button type="button" className="profile-button" aria-haspopup="menu" aria-expanded={profileOpen} onClick={()=>setProfileOpen(v=>!v)}><span>AM</span><div><strong>Amy Morgan</strong><small>Head Office</small></div><ChevronDown size={14} aria-hidden="true"/></button>
-      {profileOpen&&<div className="profile-menu" role="menu" aria-label="Account menu">
-       <div className="profile-menu-meta"><strong>Amy Morgan</strong><small>Head Office · All Franchises</small></div>
-       <button role="menuitem" type="button" onClick={()=>{setProfileOpen(false);router.push('/fetch')}}><FileInput size={15}/><span>Document intake</span></button>
-       <button role="menuitem" type="button" onClick={()=>{setProfileOpen(false);router.push('/admin')}}><ShieldCheck size={15}/><span>Admin console</span></button>
-       <button role="menuitem" type="button" onClick={()=>{setProfileOpen(false);toggleTheme()}}><Settings size={15}/><span>{theme==='dark'?'Use light appearance':'Use dark appearance'}</span></button>
-      </div>}
-     </div>
+     <div className="profile-menu-wrap" ref={profileRef}><button type="button" className="profile-button" aria-haspopup="menu" aria-expanded={profileOpen} onClick={()=>setProfileOpen(v=>!v)}><span>AM</span><div><strong>Amy Morgan</strong><small>Head Office</small></div><ChevronDown size={14} aria-hidden="true"/></button>{profileOpen&&<div className="profile-menu" role="menu" aria-label="Account menu"><div className="profile-menu-meta"><strong>Amy Morgan</strong><small>Head Office · All Franchises</small></div><button role="menuitem" type="button" onClick={()=>{setProfileOpen(false);router.push('/fetch')}}><FileInput size={15}/><span>Document intake</span></button><button role="menuitem" type="button" onClick={()=>{setProfileOpen(false);router.push('/admin')}}><ShieldCheck size={15}/><span>Admin console</span></button><button role="menuitem" type="button" onClick={()=>{setProfileOpen(false);toggleTheme()}}><Settings size={15}/><span>{theme==='dark'?'Use light appearance':'Use dark appearance'}</span></button></div>}</div>
     </div>
    </header>
    <main id="content" className="page-content">{children}</main>
