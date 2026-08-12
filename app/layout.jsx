@@ -10,6 +10,7 @@ import './report-studio-ui.css';
 import './v8-enhancements.css';
 import './access-control.css';
 import './landing.css';
+import './interaction-fixes.css';
 
 export const metadata = {
   title: { default: 'InspectFlow', template: '%s · InspectFlow' },
