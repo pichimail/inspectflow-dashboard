@@ -13,6 +13,6 @@ export default function ModuleRouter({module,slug}){
  if(module==='enquiries')return <EnquiriesModule slug={slug}/>;
  if(module==='inspections')return <InspectionsModule slug={slug}/>;
  if(module==='quick-sms')return <QuickSMS/>;
- if(['inspectors','franchises','storage','campaigns','referrals','reviews'].includes(module))return <NetworkModule module={module}/>;
+ if(['inspectors','franchises','storage','campaigns','referrals','reviews'].includes(module))return <NetworkModule module={module} slug={slug}/>;
  return <Dashboard/>;
 }
