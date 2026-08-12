@@ -8,6 +8,7 @@ import './theme-system.css';
 import './report-themes.css';
 import './report-studio-ui.css';
 import './v8-enhancements.css';
+import './landing.css';
 
 export const metadata = {
   title: { default: 'InspectFlow', template: '%s · InspectFlow' },
