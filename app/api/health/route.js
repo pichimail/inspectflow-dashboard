@@ -15,7 +15,7 @@ export async function GET(req){
   const deep=new URL(req.url).searchParams.get('deep')==='1';
   const candidates=dbCandidates();
   const status={
-    status:'ok',app:'InspectFlow',version:'7.0.0',
+    status:'ok',app:'InspectFlow',version:'8.0.0',
     ai:Boolean(process.env.OPENROUTER_API_KEY),
     database:candidates.length>0,
     blob:Boolean(process.env.BLOB_READ_WRITE_TOKEN),
