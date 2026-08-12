@@ -35,7 +35,7 @@ export default function ReportStudio(){
 
   <section className="report-workspace surface" style={{gridTemplateColumns:`${outline}px 8px minmax(0,1fr)`}}>
    <aside className="report-outline" ref={outlineRef} aria-label="Report sections"><header><strong>Report sections</strong><small>19 client-facing sections · scroll synced</small></header><div className="report-outline-list">{reportSections.map((name,index)=><button type="button" data-outline-section={index} aria-current={section===index?'page':undefined} className={section===index?'active':''} key={name} onClick={()=>selectSection(index)}><span>{String(index+1).padStart(2,'0')}</span><b>{name}</b></button>)}</div></aside>
-   <div className="splitter" role="separator" aria-label="Resize report outline" aria-valuemin={220} aria-valuemax={390} aria-valuenow={outline} aria-orientation="vertical" tabIndex={0} onPointerDown={()=>drag.current=true} onKeyDown={event=>{if(event.key==='ArrowLeft'){event.preventDefault();setOutline(value=>Math.max(220,value-12))}if(event.key==='ArrowRight'){event.preventDefault();setOutline(value=>Math.min(390,value+12))}}/>
+   <div className="splitter" role="separator" aria-label="Resize report outline" aria-valuemin={220} aria-valuemax={390} aria-valuenow={outline} aria-orientation="vertical" tabIndex={0} onPointerDown={()=>{drag.current=true}} onKeyDown={event=>{if(event.key==='ArrowLeft'){event.preventDefault();setOutline(value=>Math.max(220,value-12))}if(event.key==='ArrowRight'){event.preventDefault();setOutline(value=>Math.min(390,value+12))}}}/>
    <div className="report-canvas" ref={canvasRef} tabIndex={0} aria-label={`${selected.label} report live preview`}><ReportTemplate template={template} activeSection={section} mode="studio"/></div>
   </section>
  </div>
